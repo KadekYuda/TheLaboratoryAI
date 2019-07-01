@@ -19,8 +19,9 @@ public class AI extends LaboAI {
   private ServerConnecter connector;
   private int playerID;
   private String lastCommand;
-
+  private MinimaxAgent minimaxAgent;
   private static final String AI_NAME = "YEEBot";
+  private final static String MAGIC_WORDS = "205 PLAY ";
 
   public AI(Game game) {
     super(game);
@@ -59,6 +60,7 @@ public class AI extends LaboAI {
       sendMessage("101 NAME " + AI_NAME);
     } else if (parsedMessage[0].equals("102")) {
       this.playerID = Integer.decode(parsedMessage[2]);
+      this.minimaxAgent = new MinimaxAgent(playerID);
       this.gameBoard.setPlayerName(Integer.decode(parsedMessage[2]), AI_NAME);
       this.gameBoard.setGameState(Game.STATE_WAIT_PLAYER_PLAY);
     } else if (parsedMessage[0].equals("200") || parsedMessage[0].equals("206")){
@@ -68,7 +70,9 @@ public class AI extends LaboAI {
       System.out.println(this.gameBoard.getBoardInformation());
     } else if (parsedMessage[0].equals("204")) {
       // Greedy
-      String command = GreedyAgent.move(gameBoard, playerID);
+      // String command = GreedyAgent.move(gameBoard, playerID);
+      String command = MAGIC_WORDS + playerID + " " + minimaxAgent.pickMove(gameBoard, playerID);
+      // Minimax
       sendMessage(command);
       lastCommand = command;
     } else if (parsedMessage[0].equals("207")) {

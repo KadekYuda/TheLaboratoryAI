@@ -27,6 +27,7 @@ public class Move {
     this.worker =  worker;
     this.place = place;
     this.options = options;
+    this.value = new Double(0);
   }
 
   public Move(Double value) {

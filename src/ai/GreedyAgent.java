@@ -32,11 +32,6 @@ public class GreedyAgent {
   }
 
   public static String move(Game currentGameState, int playerID) {
-    System.out.println("Possible Moves: ");
-    for(Move moves: MinimaxAgent.getPossibleMoves(currentGameState, playerID)) {
-      System.out.println(moves.toString());
-    }
-    System.out.println("==================================");
     String workerPlayed = currentGameState.getResourcesOf(playerID).hasWorkerOf(STUDENT) ? STUDENT : PROFESSOR;
     int[] values = new int[21];
     int maxValue = 0;

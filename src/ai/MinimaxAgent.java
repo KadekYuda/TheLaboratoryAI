@@ -16,46 +16,47 @@ import java.util.ArrayList;
  */
 public class MinimaxAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
-
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
+  private final static int MAX_DEPTH = 1;
+  private int playerID;
 
-  private final static int MAX_DEPTH = 3;
-  public MinimaxAgent(){
-
+  public MinimaxAgent(int playerID){
+    this.playerID = playerID;
   }
 
-  public Double evaluationFunction(Game currentGameState, int playerID) {
+  public Double evaluationFunction(Game currentGameState) {
     int score = currentGameState.getScore()[playerID];
     int money = currentGameState.getResourcesOf(playerID).getCurrentMoney();
     int flask = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(0);
     int gear = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(1);
-    int debt = currentGameState.getResourcesOf(playerID).getDebt();
     // TODO: Tune parameters
-    return new Double(10*score + money + 3*flask + 2*gear - 30*debt);
+    return new Double(10*score + money + 3*flask + 2*gear);
   }
 
-  public String pickMove(Game gameState, int playerID, int currentDepth, boolean isMax) {
-    return minimax(gameState, playerID, 0, true).toString();
+  public String pickMove(Game gameState, int playerID) {
+    return minimax(gameState, 0, true).toString();
   }
 
-  public Move minimax(Game gameState, int playerID, int currentDepth, boolean isMax) {
-    if ((currentDepth == MAX_DEPTH) || getPossibleMoves(gameState, playerID).isEmpty()) {
-      return new Move(evaluationFunction(gameState, playerID));
+  public Move minimax(Game gameState, int currentDepth, boolean isMax) {
+    int currentPlayer = (isMax) ? playerID : (playerID^1);
+    ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
+    if ((currentDepth == MAX_DEPTH) || possibleMoves.isEmpty()) {
+      return new Move(evaluationFunction(gameState));
     } else {
-      ArrayList<Move> possibleMoves = getPossibleMoves(gameState, playerID);
-      Double bestValue = isMax ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+      Double bestValue = isMax ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
-        currentGame.play(playerID, move.getPlace(), move.getWorker(), move.getOptions());
-        Move childMove = minimax(currentGame, playerID, currentDepth+1, !isMax);
+        currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
+        Move childMove = minimax(currentGame, currentDepth+1, !isMax);
+
         if (isMax && childMove.getValue() > bestValue) {
           bestValue = childMove.getValue();
-          bestMove = childMove;
+          bestMove = move;
         } else if (!isMax && bestValue > childMove.getValue()) {
           bestValue = childMove.getValue();
-          bestMove = childMove;
+          bestMove = move;
         }
       }
       return bestMove;
