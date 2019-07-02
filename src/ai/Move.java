@@ -7,8 +7,11 @@
 package ai;
 
 /**
+ * Class to encapsulate move. Contains worker type, place, options, and value.
+ * Value is used to store value of the new game state after executing the move,
+ * thus become the value of the move
  *
- * @author yudai
+ * @author Kadek Yuda
  */
 public class Move {
   private String worker;

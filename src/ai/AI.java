@@ -12,7 +12,7 @@ import network.ServerConnecter;
 
 /**
  *
- * @author yudai
+ * @author Kadek Yuda
  */
 public class AI extends LaboAI {
   private MessageTransactionable mr;

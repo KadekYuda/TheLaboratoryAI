@@ -11,22 +11,29 @@ import gameElements.GameResources;
 import java.util.ArrayList;
 
 /**
- *
- * @author yudai
+ * Game AI using Minimax algorithm approach to make decision on move.
+ * @author Kadek Yuda
  */
 public class MinimaxAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
   private final static int MAX_DEPTH = 1;
-  private int playerID;
+  private final int playerID;
 
+  /**
+   * @param playerID current player ID. Value is 0 or 1.
+   */
   public MinimaxAgent(int playerID){
     this.playerID = playerID;
   }
 
+  /**
+   * Evaluation function used by this agent.
+   * @param currentGameState currently running game state.
+   * @return value of current game state in Double.
+   */
   public Double evaluationFunction(Game currentGameState) {
-    // TODO: Tune parameters
     int playerScore = currentGameState.getScore()[playerID];
     int playerMoney = currentGameState.getResourcesOf(playerID).getCurrentMoney();
     int playerFlask = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(0);
@@ -42,10 +49,24 @@ public class MinimaxAgent {
     return new Double(100*(playerScore-opponentScore) + (playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear));
   }
 
+  /**
+   * Method used to get best move. Call this function to get best command based
+   * on Minimax algorithm using current evaluation function.
+   * @param gameState
+   * @param playerID this player ID
+   * @return String of best move possible. Code to send command and player ID not included.
+   */
   public String pickMove(Game gameState, int playerID) {
     return minimax(gameState, 0, true).toString();
   }
 
+  /**
+   * Method used to calculate the based move by Minimax algorithm.
+   * @param gameState currently running game state.
+   * @param currentDepth current depth of search
+   * @param isMax indicator if it is the Maximizer (player) or Minimizer (opponent) turn.
+   * @return
+   */
   public Move minimax(Game gameState, int currentDepth, boolean isMax) {
     int currentPlayer = (isMax) ? playerID : (playerID^1);
     ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
@@ -71,6 +92,12 @@ public class MinimaxAgent {
     }
   }
 
+  /**
+   * Method used to get all the possible move.
+   * @param gameState currently running game state.
+   * @param playerID player ID
+   * @return list of possible move.
+   */
   public static ArrayList<Move> getPossibleMoves(Game gameState, int playerID) {
     ArrayList<Move> possibleMoves = new ArrayList<>();
     String[] availableWorkers = getAvailableWorkers(gameState, playerID);
@@ -84,6 +111,12 @@ public class MinimaxAgent {
     return possibleMoves;
   }
 
+  /**
+   * Method used to get all available workers.
+   * @param gameState currently running game state
+   * @param playerID this player ID
+   * @return Array of Strings indicating worker types.
+   */
   private static String[] getAvailableWorkers(Game gameState, int playerID) {
     GameResources gameResources = gameState.getResourcesOf(playerID);
     ArrayList<String> availableWorkers = new ArrayList<>();
@@ -96,6 +129,11 @@ public class MinimaxAgent {
     return availableWorkers.toArray(new String[availableWorkers.size()]);
   }
 
+  /**
+   * Method to get possible options based on place to go.
+   * @param place place the worker wants to go.
+   * @return
+   */
   private static String[] getPossibleOptions(String place) {
     switch (place) {
       case "1-1":
