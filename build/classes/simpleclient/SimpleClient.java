@@ -4,6 +4,7 @@
  */
 package simpleclient;
 
+import ai.AI;
 import ai.LaboAI;
 import gameElements.Game;
 import gui.ClientGUI;
@@ -34,8 +35,10 @@ public class SimpleClient {
             Logger.getLogger(SimpleClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         Game myGame = new Game();
-        ClientGUI gui = new ClientGUI();
-        
+        LaboAI ai = new AI(myGame);
+
+        ClientGUI gui = new ClientGUI(ai);
+
         gui.setVisible(true);
     }
 }

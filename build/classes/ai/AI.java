@@ -69,12 +69,10 @@ public class AI extends LaboAI {
       this.gameBoard.play(Integer.decode(parsedMessage[2]), parsedMessage[4], parsedMessage[3], option);
       System.out.println(this.gameBoard.getBoardInformation());
     } else if (parsedMessage[0].equals("204")) {
-      Long start = System.nanoTime();
-      String move = minimaxAgent.pickMove(gameBoard, playerID);
-      Long finish = System.nanoTime();
-      double elapsedTime = (finish - start) / 1_000_000_000;
-      mr.addMessage("Thinking time: " + elapsedTime + "s");
-      String command = MAGIC_WORDS + playerID + " " + move;
+      // Greedy
+      // String command = GreedyAgent.move(gameBoard, playerID);
+      String command = MAGIC_WORDS + playerID + " " + minimaxAgent.pickMove(gameBoard, playerID);
+      // Minimax
       sendMessage(command);
       lastCommand = command;
     } else if (parsedMessage[0].equals("207")) {
@@ -85,7 +83,7 @@ public class AI extends LaboAI {
       lastCommand = command;
     }
     else {
-      mr.addMessage(text);
+      mr.addMessage("[new] " + text);
     }
   }
 

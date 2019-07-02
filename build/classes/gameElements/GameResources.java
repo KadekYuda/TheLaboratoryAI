@@ -10,20 +10,32 @@ package gameElements;
  * @author kosen
  */
 public class GameResources {
+    //機材の利用コスト()
+    public final int MachinesCost[] = {2,1,1,2,2,2};
+
+    //以下は個別に持つ値
+    //所持金
     private int money;
-    private int reserchPoint;
+    //研究成果
+    private int[] reserchPoint;
+    //得点
     private int[] score;
+    //負債の数
     private int debtCount;
-    
+    //使用前のコマ　[0]学生 [1]該当なし [2]教授
     private int[] workerList;
+    //使用済みのコマ　[0]学生 [1]該当なし [2]教授
     private int[] usedWorkers;
-    
+    //スタートプレーヤか否か
     private boolean startPlayerFlag;
-    
-    
+    //設備の配備状況
+    private boolean[] machines;
+
     public GameResources(){
-        this.money = 0;
-        this.reserchPoint = 0;
+        this.money = 5;
+        this.reserchPoint = new int[2];
+        this.reserchPoint[0] = 0;
+        this.reserchPoint[1] = 0;
         this.score = new int[3];
         this.score[0] = 0;
         this.score[1] = 0;
@@ -31,17 +43,31 @@ public class GameResources {
         this.workerList = new int[3];
         this.workerList[0] = 1;
         this.workerList[1] = 0;
-        this.workerList[2] = 1;
+        this.workerList[2] = 2;
         this.usedWorkers = new int[3];
         this.debtCount = 0;
         this.startPlayerFlag = false;
+
+        this.machines = new boolean[MachinesCost.length];
+        for(int i=0;i<MachinesCost.length;i++){
+             this.machines[i] = false;
+        }
+    }
+
+    public GameResources(GameResources gameResources) {
+      this.money = gameResources.money;
+      this.reserchPoint = gameResources.reserchPoint.clone();
+      this.score = gameResources.score.clone();
+      this.workerList = gameResources.workerList.clone();
+      this.usedWorkers = gameResources.usedWorkers.clone();
+      this.debtCount = gameResources.debtCount;
+      this.startPlayerFlag = gameResources.startPlayerFlag;
+      this.machines = gameResources.machines.clone();
     }
 
     public boolean hasWorkerOf(String typeOfWorker) {
         if(typeOfWorker.equals("P")){
             return (this.workerList[0] > 0);
-        } else if (typeOfWorker.equals("A")){
-            return (this.workerList[1] > 0);
         } else if (typeOfWorker.equals("S")){
             return (this.workerList[2] > 0);
         }
@@ -61,9 +87,6 @@ public class GameResources {
             if(typeOfWorker.equals("P")){
                 this.workerList[0]--;
                 this.usedWorkers[0]++;
-            } else if (typeOfWorker.equals("A")){
-                this.workerList[1]--;
-                this.usedWorkers[1]++;
             } else if (typeOfWorker.equals("S")){
                 this.workerList[2]--;
                 this.usedWorkers[2]++;
@@ -71,31 +94,23 @@ public class GameResources {
         }
     }
 
-    public int getCurrentResrchPoint() {
-        return this.reserchPoint;
+    public int getCurrentResrchPoint(int type) {
+        return this.reserchPoint[type];
     }
 
-    public void addReserchPoint(int i) {
-        this.reserchPoint += i;
+    public void addReserchPoint(int point,int type) {
+        this.reserchPoint[type] += point;
+        if(this.reserchPoint[type] > 15){
+            this.reserchPoint[type] = 15;
+        }
     }
 
     public boolean hasWorker() {
         return ((this.workerList[0]+this.workerList[1]+this.workerList[2]) > 0);
     }
 
-    public int getSocreOf(String trend) {
-        if(trend.equals("T1")){
-            return this.score[0];
-        } else if(trend.equals("T2")){
-            return this.score[1];
-        } else if(trend.equals("T3")){
-            return this.score[2];
-        }
-        return -1;
-    }
-
     public int getTotalScore() {
-        return this.score[0]+this.score[1]+this.score[2];
+        return this.score[0]+this.score[1]+this.score[2]-3*this.debtCount;
     }
 
     public boolean isStartPlayer() {
@@ -107,7 +122,7 @@ public class GameResources {
     }
 
     public void addNewStudent() {
-        this.usedWorkers[2]++;
+        this.workerList[2]++;
     }
 
     public void addNewAssistant() {
@@ -121,9 +136,12 @@ public class GameResources {
         }
     }
 
-    public void payMoneytoWokers() {
-        this.money -= this.workerList[2];
-        this.money -= 3*this.workerList[1];
+    public void payMoneyforTools() {
+        for(int m=0;m<MachinesCost.length;m++){
+            if(this.machines[m]){
+                this.money -= MachinesCost[m];
+            }
+        }
         if(this.money < 0 ) {
             this.debtCount += (-1)*this.money;
             this.money = 0;
@@ -137,5 +155,38 @@ public class GameResources {
     public int getTotalStudentsCount() {
         return this.workerList[2] + this.usedWorkers[2];
     }
-    
+
+    public int getNumberofUseableWorkers(String typeOfWorker) {
+        if(typeOfWorker.equals("P")){
+            return this.workerList[0];
+        } else if (typeOfWorker.equals("A")){
+            return this.workerList[1];
+        } else if (typeOfWorker.equals("S")){
+            return this.workerList[2];
+        }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public int getDebt() {
+        return this.debtCount;
+    }
+
+    //機材の有無
+    public boolean hasMachine(int i) {
+        return this.machines[i];
+    }
+    public void getMachine(int i){
+        this.machines[i] = true;
+    }
+
+    public int getSocreOf(String trend) {
+        if(trend.equals("T1")){
+            return this.score[0];
+        } else if(trend.equals("T2")){
+            return this.score[1];
+        } else if(trend.equals("T3")){
+            return this.score[2];
+        }
+        return -1;
+    }
 }

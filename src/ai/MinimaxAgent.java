@@ -9,6 +9,7 @@ package ai;
 import gameElements.Game;
 import gameElements.GameResources;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Game AI using Minimax algorithm approach to make decision on move.
@@ -18,11 +19,12 @@ public class MinimaxAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
-  private final static int MAX_DEPTH = 1;
+  private final static int MAX_DEPTH = 3;
   private final int playerID;
 
   /**
    * @param playerID current player ID. Value is 0 or 1.
+   * @author Kadek Yuda
    */
   public MinimaxAgent(int playerID){
     this.playerID = playerID;
@@ -32,6 +34,7 @@ public class MinimaxAgent {
    * Evaluation function used by this agent.
    * @param currentGameState currently running game state.
    * @return value of current game state in Double.
+   * @author Kadek Yuda
    */
   public Double evaluationFunction(Game currentGameState) {
     int playerScore = currentGameState.getScore()[playerID];
@@ -55,6 +58,7 @@ public class MinimaxAgent {
    * @param gameState
    * @param playerID this player ID
    * @return String of best move possible. Code to send command and player ID not included.
+   * @author Kadek Yuda
    */
   public String pickMove(Game gameState, int playerID) {
     return minimax(gameState, 0, true).toString();
@@ -65,19 +69,26 @@ public class MinimaxAgent {
    * @param gameState currently running game state.
    * @param currentDepth current depth of search
    * @param isMax indicator if it is the Maximizer (player) or Minimizer (opponent) turn.
-   * @return
+   * @return best Move according to minimax algorithm
    */
   public Move minimax(Game gameState, int currentDepth, boolean isMax) {
     int currentPlayer = (isMax) ? playerID : (playerID^1);
     ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
+    Collections.shuffle(possibleMoves);
     if ((currentDepth == MAX_DEPTH) || possibleMoves.isEmpty()) {
+      Double value = evaluationFunction(gameState);
+      System.out.println((currentDepth == MAX_DEPTH) ? "Max depth! value = " + value : "No more possible move! value = " + value);
       return new Move(evaluationFunction(gameState));
     } else {
       Double bestValue = isMax ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
+        System.out.println("Playing " + currentPlayer + " " + move.getOptions());
         currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
+        // TODO: Case if opponent/player has extra Student
+        // if isMax && player still have worker && opponent have no worker (don't add depth)
+        // else if isMin && opponent still have worker && player have no worker (don't add depth)
         Move childMove = minimax(currentGame, currentDepth+1, !isMax);
 
         if (isMax && childMove.getValue() > bestValue) {
@@ -132,7 +143,7 @@ public class MinimaxAgent {
   /**
    * Method to get possible options based on place to go.
    * @param place place the worker wants to go.
-   * @return
+   * @return Array of options.
    */
   private static String[] getPossibleOptions(String place) {
     switch (place) {

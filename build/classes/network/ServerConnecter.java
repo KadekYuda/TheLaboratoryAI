@@ -4,7 +4,6 @@
  */
 package network;
 
-import gui.MessageRecevable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import gui.MessageTransactionable;
 
 /**
  *
@@ -22,14 +22,14 @@ public class ServerConnecter {
     private PrintWriter writer;
     private BufferedReader reader;
     private Socket connectedSocket;
-    private ArrayList<MessageRecevable> recevers;
+    private ArrayList<MessageTransactionable> recevers;
     
-    public ServerConnecter(MessageRecevable rc){
-        this.recevers = new ArrayList<MessageRecevable>();
+    public ServerConnecter(MessageTransactionable rc){
+        this.recevers = new ArrayList<MessageTransactionable>();
         this.recevers.add(rc);
     }
     
-    public void addMessageRecever(MessageRecevable rc){
+    public void addMessageRecever(MessageTransactionable rc){
         this.recevers.add(rc);
     }
 
@@ -43,12 +43,12 @@ public class ServerConnecter {
                     String line;
                     try{
                         while((line = ServerConnecter.this.reader.readLine()) != null){
-                            for(MessageRecevable rc:ServerConnecter.this.recevers){
+                            for(MessageTransactionable rc:ServerConnecter.this.recevers){
                                 rc.reciveMessage(line);
                             }
                         }
                    } catch (IOException ex) {
-                        for(MessageRecevable rc:ServerConnecter.this.recevers){
+                        for(MessageTransactionable rc:ServerConnecter.this.recevers){
                             rc.addMessage("IOException");
                         }
                    }

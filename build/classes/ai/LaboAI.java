@@ -6,15 +6,15 @@ package ai;
 
 import gameElements.Game;
 import gui.ClientGUI;
-import gui.MessageRecevable;
 import network.ServerConnecter;
+import gui.MessageTransactionable;
 
 /**
  * このクラスは抽象クラスです。
  * 継承して機能を実装しないと使うことができません。
  * @author koji
  */
-public abstract class LaboAI implements MessageRecevable{
+public abstract class LaboAI implements MessageTransactionable{
     protected Game gameBoard;
     protected boolean isThinking;
   
@@ -33,6 +33,6 @@ public abstract class LaboAI implements MessageRecevable{
         this.isThinking = false;
     }
     
-    public abstract void setOutputInterface(MessageRecevable mr);
+    public abstract void setOutputInterface(MessageTransactionable mr);
     
 }
