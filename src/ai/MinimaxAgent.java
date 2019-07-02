@@ -26,12 +26,20 @@ public class MinimaxAgent {
   }
 
   public Double evaluationFunction(Game currentGameState) {
-    int score = currentGameState.getScore()[playerID];
-    int money = currentGameState.getResourcesOf(playerID).getCurrentMoney();
-    int flask = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(0);
-    int gear = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(1);
     // TODO: Tune parameters
-    return new Double(10*score + money + 3*flask + 2*gear);
+    int playerScore = currentGameState.getScore()[playerID];
+    int playerMoney = currentGameState.getResourcesOf(playerID).getCurrentMoney();
+    int playerFlask = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(0);
+    int playerGear = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(1);
+
+    int opponentID = playerID^1;
+
+    int opponentScore = currentGameState.getScore()[opponentID];
+    int opponentMoney = currentGameState.getResourcesOf(opponentID).getCurrentMoney();
+    int opponentFlask = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(0);
+    int opponentGear = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(1);
+
+    return new Double(100*(playerScore-opponentScore) + (playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear));
   }
 
   public String pickMove(Game gameState, int playerID) {
