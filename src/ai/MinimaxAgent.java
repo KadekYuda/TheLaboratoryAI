@@ -19,7 +19,7 @@ public class MinimaxAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
-  private final static int MAX_DEPTH = 3;
+  private final static int MAX_DEPTH = 4;
   private final int playerID;
 
   /**
@@ -49,7 +49,7 @@ public class MinimaxAgent {
     int opponentFlask = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(0);
     int opponentGear = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(1);
 
-    return new Double(100*(playerScore-opponentScore) + (playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear));
+    return 100*(playerScore-opponentScore) + 0.6*(playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear);
   }
 
   /**
@@ -84,7 +84,7 @@ public class MinimaxAgent {
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
-        System.out.println("Playing " + currentPlayer + " " + move.getOptions());
+        System.out.println("Playing " + currentPlayer + " " + move.toString());
         currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
         // TODO: Case if opponent/player has extra Student
         // if isMax && player still have worker && opponent have no worker (don't add depth)
