@@ -9,6 +9,7 @@ package ai;
 import gameElements.Game;
 import gameElements.GameResources;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Game AI using Minimax algorithm approach to make decision on move.
@@ -18,7 +19,7 @@ public class MinimaxAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
-  private final static int MAX_DEPTH = 1;
+  private final static int MAX_DEPTH = 4;
   private final int playerID;
 
   /**
@@ -48,7 +49,7 @@ public class MinimaxAgent {
     int opponentFlask = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(0);
     int opponentGear = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(1);
 
-    return new Double(100*(playerScore-opponentScore) + (playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear));
+    return 100*(playerScore-opponentScore) + 0.6*(playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear);
   }
 
   /**
@@ -73,14 +74,21 @@ public class MinimaxAgent {
   public Move minimax(Game gameState, int currentDepth, boolean isMax) {
     int currentPlayer = (isMax) ? playerID : (playerID^1);
     ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
+    Collections.shuffle(possibleMoves);
     if ((currentDepth == MAX_DEPTH) || possibleMoves.isEmpty()) {
+      Double value = evaluationFunction(gameState);
+      System.out.println((currentDepth == MAX_DEPTH) ? "Max depth! value = " + value : "No more possible move! value = " + value);
       return new Move(evaluationFunction(gameState));
     } else {
       Double bestValue = isMax ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
+        System.out.println("Playing " + currentPlayer + " " + move.toString());
         currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
+        // TODO: Case if opponent/player has extra Student
+        // if isMax && player still have worker && opponent have no worker (don't add depth)
+        // else if isMin && opponent still have worker && player have no worker (don't add depth)
         Move childMove = minimax(currentGame, currentDepth+1, !isMax);
 
         if (isMax && childMove.getValue() > bestValue) {

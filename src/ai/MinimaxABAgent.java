@@ -19,7 +19,7 @@ public class MinimaxABAgent {
   private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
-  private final static int MAX_DEPTH = 4;
+  private final static int MAX_DEPTH = 8;
   private final int playerID;
 
   /**
@@ -55,20 +55,19 @@ public class MinimaxABAgent {
     int currentPlayer = (isMax) ? playerID : (playerID^1);
     ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
     Collections.shuffle(possibleMoves);
-    if ((currentDepth == MAX_DEPTH) || possibleMoves.isEmpty()) {
+    if ((currentDepth == MAX_DEPTH) || gameState.getGameState() == Game.STATE_GAME_END) {
       Double value = evaluationFunction(gameState);
-      System.out.println((currentDepth == MAX_DEPTH) ? "Max depth! value = " + value : "No more possible move! value = " + value);
-      return new Move(evaluationFunction(gameState));
+//      if (currentDepth == MAX_DEPTH) {
+//        System.out.println("Max depth! value = " + value);
+//      }
+      return new Move(value);
     } else {
       Double bestValue = isMax ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
-        System.out.println("Playing " + currentPlayer + " " + move.toString());
+//        System.out.println("Playing " + currentPlayer + " " + move.toString());
         currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
-        // TODO: Case if opponent/player has extra Student
-        // if isMax && player still have worker && opponent have no worker (don't add depth)
-        // else if isMin && opponent still have worker && player have no worker (don't add depth)
         Move childMove;
         if (gameState.getResourcesOf(playerID).hasWorker() && !gameState.getResourcesOf(playerID^1).hasWorker()) {
           childMove = minimaxAB(currentGame, currentDepth, isMax, alpha, beta);
@@ -108,16 +107,27 @@ public class MinimaxABAgent {
     int playerMoney = currentGameState.getResourcesOf(playerID).getCurrentMoney();
     int playerFlask = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(0);
     int playerGear = currentGameState.getResourcesOf(playerID).getCurrentResrchPoint(1);
-
+    int playerDebt = currentGameState.getResourcesOf(playerID).getDebt();
     int opponentID = playerID^1;
 
     int opponentScore = currentGameState.getScore()[opponentID];
     int opponentMoney = currentGameState.getResourcesOf(opponentID).getCurrentMoney();
     int opponentFlask = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(0);
     int opponentGear = currentGameState.getResourcesOf(opponentID).getCurrentResrchPoint(1);
+    int opponentDebt = currentGameState.getResourcesOf(opponentID).getDebt();
 
-    return 100*(playerScore-opponentScore) + 0.6*(playerMoney-opponentMoney) + (playerFlask-opponentFlask) + (playerGear-opponentGear);
-  }
+    if (currentGameState.getGameState() == Game.STATE_GAME_END) {
+      System.out.println("Reached terminal state!");
+      return new Double((playerScore - opponentScore));
+    } else {
+      Double evalValue = new Double(0);
+      evalValue += playerScore - opponentScore - 3*(playerDebt - opponentDebt);
+      evalValue += playerMoney - opponentMoney;
+      evalValue += playerFlask - opponentFlask;
+      evalValue += playerGear - opponentGear;
+      return evalValue;
+    }
+   }
 
     /**
    * Method used to get all the possible move.

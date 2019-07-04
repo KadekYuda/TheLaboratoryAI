@@ -733,7 +733,7 @@ public class Game extends Observable{
                 //表示のために待つならココ
 
                 //次のシーズンの準備
-                //this.changeNewSeason();
+                this.changeNewSeason();
                 return;
             }
         }

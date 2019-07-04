@@ -20,6 +20,7 @@ public class AI extends LaboAI {
   private int playerID;
   private String lastCommand;
   private MinimaxAgent minimaxAgent;
+  private MinimaxABAgent minimaxABAgent;
   private static final String AI_NAME = "YEEBot";
   private final static String MAGIC_WORDS = "205 PLAY ";
 
@@ -61,6 +62,7 @@ public class AI extends LaboAI {
     } else if (parsedMessage[0].equals("102")) {
       this.playerID = Integer.decode(parsedMessage[2]);
       this.minimaxAgent = new MinimaxAgent(playerID);
+      this.minimaxABAgent = new MinimaxABAgent(playerID);
       this.gameBoard.setPlayerName(Integer.decode(parsedMessage[2]), AI_NAME);
       this.gameBoard.setGameState(Game.STATE_WAIT_PLAYER_PLAY);
     } else if (parsedMessage[0].equals("200") || parsedMessage[0].equals("206")){
@@ -69,10 +71,13 @@ public class AI extends LaboAI {
       this.gameBoard.play(Integer.decode(parsedMessage[2]), parsedMessage[4], parsedMessage[3], option);
       System.out.println(this.gameBoard.getBoardInformation());
     } else if (parsedMessage[0].equals("204")) {
-      // Greedy
-      // String command = GreedyAgent.move(gameBoard, playerID);
-      String command = MAGIC_WORDS + playerID + " " + minimaxAgent.pickMove(gameBoard, playerID);
-      // Minimax
+      Long start = System.nanoTime();
+      //String move = minimaxAgent.pickMove(gameBoard, playerID);
+      String move = minimaxABAgent.pickMove(gameBoard);
+      Long finish = System.nanoTime();
+      double elapsedTime = (finish - start) / 1_000_000_000;
+      mr.addMessage("Thinking time: " + elapsedTime + "s");
+      String command = MAGIC_WORDS + playerID + " " + move;
       sendMessage(command);
       lastCommand = command;
     } else if (parsedMessage[0].equals("207")) {
@@ -83,7 +88,7 @@ public class AI extends LaboAI {
       lastCommand = command;
     }
     else {
-      mr.addMessage("[new] " + text);
+      mr.addMessage(text);
     }
   }
 
