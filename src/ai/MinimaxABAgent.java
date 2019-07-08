@@ -121,10 +121,10 @@ public class MinimaxABAgent {
       return new Double((playerScore - opponentScore));
     } else {
       Double evalValue = new Double(0);
-      evalValue += playerScore - opponentScore - 3*(playerDebt - opponentDebt);
-      evalValue += playerMoney - opponentMoney;
-      evalValue += playerFlask - opponentFlask;
-      evalValue += playerGear - opponentGear;
+      evalValue += 5*(playerScore - opponentScore) - 3*(playerDebt - opponentDebt);
+      evalValue += 0.5*(playerMoney - opponentMoney);
+      evalValue += 2*(playerFlask - opponentFlask);
+      evalValue += 2*(playerGear - opponentGear);
       return evalValue;
     }
    }
