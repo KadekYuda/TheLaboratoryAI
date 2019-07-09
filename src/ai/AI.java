@@ -21,8 +21,9 @@ public class AI extends LaboAI {
   private String lastCommand;
   private MinimaxAgent minimaxAgent;
   private MinimaxABAgent minimaxABAgent;
-  private static final String AI_NAME = "YEEBot";
+  private static final String AI_NAME = "YEEBot 0.0.11";
   private final static String MAGIC_WORDS = "205 PLAY ";
+  private int counter = 0;
 
   public AI(Game game) {
     super(game);
@@ -70,9 +71,9 @@ public class AI extends LaboAI {
       String option = (parsedMessage.length) == 6 ? parsedMessage[5] : "";
       this.gameBoard.play(Integer.decode(parsedMessage[2]), parsedMessage[4], parsedMessage[3], option);
       System.out.println(this.gameBoard.getBoardInformation());
+      System.out.println("");
     } else if (parsedMessage[0].equals("204")) {
       Long start = System.nanoTime();
-      //String move = minimaxAgent.pickMove(gameBoard, playerID);
       String move = minimaxABAgent.pickMove(gameBoard);
       Long finish = System.nanoTime();
       double elapsedTime = (finish - start) / 1_000_000_000;

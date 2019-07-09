@@ -16,7 +16,7 @@ import java.util.Collections;
  * @author yudai
  */
 public class MinimaxABAgent {
-  private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-1","4-2","4-3","4-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
+  private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
   private final static int MAX_DEPTH = 8;
@@ -66,14 +66,8 @@ public class MinimaxABAgent {
       Move bestMove = new Move(new Double(0));
       for (Move move: possibleMoves) {
         Game currentGame = new Game(gameState);
-//        System.out.println("Playing " + currentPlayer + " " + move.toString());
         currentGame.play(currentPlayer, move.getPlace(), move.getWorker(), move.getOptions());
-        Move childMove;
-        if (gameState.getResourcesOf(playerID).hasWorker() && !gameState.getResourcesOf(playerID^1).hasWorker()) {
-          childMove = minimaxAB(currentGame, currentDepth, isMax, alpha, beta);
-        } else {
-          childMove = minimaxAB(currentGame, currentDepth+1, !isMax, alpha, beta);
-        }
+        Move childMove = minimaxAB(currentGame, currentDepth+1, !isMax, alpha, beta);
         if (isMax && childMove.getValue() > bestValue) {
           bestValue = childMove.getValue();
           bestMove = move;
@@ -121,10 +115,10 @@ public class MinimaxABAgent {
       return new Double((playerScore - opponentScore));
     } else {
       Double evalValue = new Double(0);
-      evalValue += 5*(playerScore - opponentScore) - 3*(playerDebt - opponentDebt);
-      evalValue += 0.5*(playerMoney - opponentMoney);
-      evalValue += 2*(playerFlask - opponentFlask);
-      evalValue += 2*(playerGear - opponentGear);
+      evalValue += 10*(playerScore) - 3*(playerDebt);
+      evalValue += 0.5*(playerMoney);
+      evalValue += 2.5*(playerFlask);
+      evalValue += 2.5*(playerGear);
       return evalValue;
     }
    }
@@ -184,7 +178,7 @@ public class MinimaxABAgent {
       case "6-2":
         return new String[] {"FF", "FG", "GG"};
       case "7-1":
-        return new String[] {"T00", "T01", "T02", "T03", "T04", "T05"};
+        return new String[] {"T03"};
       default:
         return new String[] {""};
     }

@@ -21,7 +21,7 @@ public class AI extends LaboAI {
   private String lastCommand;
   private MinimaxAgent minimaxAgent;
   private MinimaxABAgent minimaxABAgent;
-  private static final String AI_NAME = "YEEBot";
+  private static final String AI_NAME = "YEEBot 0.0.10";
   private final static String MAGIC_WORDS = "205 PLAY ";
 
   public AI(Game game) {
