@@ -9,14 +9,14 @@ package ai;
 import gameElements.Game;
 import gameElements.GameResources;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Game AI using Minimax Approach with Alpha Beta pruning for faster thinking time.
  * @author yudai
  */
 public class MinimaxABAgent {
-  private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","4-5","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
+  //private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
+  private final static String[] PLACES_NAMES = {"5-5","5-4","5-3","5-2","5-1","3-2","2-2","6-2","6-1","3-1","3-3","7-1","6-3","3-4","2-1","1-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
   private final static int MAX_DEPTH = 8;
@@ -54,7 +54,7 @@ public class MinimaxABAgent {
   public Move minimaxAB(Game gameState, int currentDepth, boolean isMax, Double alpha, Double beta) {
     int currentPlayer = (isMax) ? playerID : (playerID^1);
     ArrayList<Move> possibleMoves = getPossibleMoves(gameState, currentPlayer);
-    Collections.shuffle(possibleMoves);
+    //Collections.shuffle(possibleMoves);
     if ((currentDepth == MAX_DEPTH) || gameState.getGameState() == Game.STATE_GAME_END) {
       Double value = evaluationFunction(gameState);
 //      if (currentDepth == MAX_DEPTH) {
@@ -112,10 +112,10 @@ public class MinimaxABAgent {
 
     if (currentGameState.getGameState() == Game.STATE_GAME_END) {
       System.out.println("Reached terminal state!");
-      return new Double((playerScore - opponentScore));
+      return new Double(20*(playerScore  - opponentScore));
     } else {
       Double evalValue = new Double(0);
-      evalValue += 10*(playerScore) - 3*(playerDebt);
+      evalValue += 20*(playerScore) - 6*(playerDebt);
       evalValue += 0.5*(playerMoney);
       evalValue += 2.5*(playerFlask);
       evalValue += 2.5*(playerGear);
