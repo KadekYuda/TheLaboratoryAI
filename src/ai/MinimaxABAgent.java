@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class MinimaxABAgent {
   //private final static String[] PLACES_NAMES = {"1-1","2-1","2-2","3-1","3-2","3-3","3-4","5-1","5-2","5-3","5-4","5-5","6-1","6-2","6-3","7-1"};
-  private final static String[] PLACES_NAMES = {"5-5","5-4","5-3","5-2","5-1","3-2","3-1","2-2","6-2","6-1","3-3","7-1","6-3","3-4","2-1","1-1"};
+  private final static String[] PLACES_NAMES = {"5-5","5-4","5-3","5-2","5-1","3-2","3-1","2-2","6-1","6-2","3-3","7-1","4-5","6-3","4-1","4-2","4-3","4-4","3-4","2-1","1-1"};
   private final static String STUDENT = "S";
   private final static String PROFESSOR = "P";
   private final static int MAX_DEPTH = 8;
